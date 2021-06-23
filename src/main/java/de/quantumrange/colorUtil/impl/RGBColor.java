@@ -1,21 +1,25 @@
 package de.quantumrange.colorUtil.impl;
 
+import de.quantumrange.colorUtil.AlphaColor;
 import de.quantumrange.colorUtil.Color;
 
-import java.nio.ByteBuffer;
-import java.util.regex.Pattern;
+public class RGBColor implements Color<RGBColor>, AlphaColor<Integer> {
 
-public class RGBColor implements Color<RGBColor> {
-
-	private static final Pattern PATTERN = Pattern.compile("#[\\d]{2}[\\d]{2}[\\d]{2}");
-	private int rgb;
+	/**
+	 * rgba Red,Green,Blue,Alpha
+	 */
+	private int rgba;
 
 	public RGBColor(java.awt.Color color) {
-		this.rgb = toInt(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		this.rgba = toInt(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
 	public RGBColor(Color<?> color) {
 		this(color.toColor());
+	}
+
+	public RGBColor() {
+		this.rgba = 0;
 	}
 
 	public RGBColor(int r, int g, int b) {
@@ -23,7 +27,7 @@ public class RGBColor implements Color<RGBColor> {
 	}
 
 	public RGBColor(int r, int g, int b, int a) {
-		this.rgb = toInt(r, g, b, a);
+		this.rgba = toInt(r, g, b, a);
 	}
 
 	private int toInt(int r, int g, int b, int a) {
@@ -36,117 +40,91 @@ public class RGBColor implements Color<RGBColor> {
 	}
 
 	@Override
-	public RGBColor parse(String str) {
-		int r = Integer.parseInt(str.substring(0, 2), 16);
-		int g = Integer.parseInt(str.substring(2, 4), 16);
-		int b = Integer.parseInt(str.substring(4, 6), 16);
-		int a = str.length() == 8 ? Integer.parseInt(str.substring(6, 8), 16) : 255;
-
-		this.rgb = toInt(r, g, b, a);
-		return this;
-	}
-
-	@Override
-	public Pattern pattern() {
-		return PATTERN;
-	}
-
-	@Override
 	public java.awt.Color toColor() {
-		return new java.awt.Color(rgb);
+		return new java.awt.Color(getRed(), getGreen(), getBlue(), getAlpha());
 	}
 
 	@Override
 	public RGBColor fromColor(java.awt.Color color) {
-		this.rgb = color.getRGB();
+		this.rgba = color.getRGB();
 		return this;
 	}
 
 	@Override
 	public byte[] toBytes() {
-		return new byte[] {(byte) getRed(), (byte) getGreen(), (byte) getBlue(), (byte) getAlpha()};
+		return new byte[] {(byte) getRed(), (byte) getGreen(), (byte) getBlue(), (byte) getAlpha().intValue()};
 	}
 
 	@Override
 	public RGBColor fromBytes(byte[] bytes) {
-		ByteBuffer buffer = ByteBuffer.wrap(bytes);
-		rgb = buffer.getInt();
+		rgba = toInt(bytes[0], bytes[1], bytes[2], bytes[3]);
 		return this;
 	}
 
 	/**
-	 * @return the red value of the color
+	 * @return the red channel of the color
 	 */
 	public int getRed() {
-		return (rgb >> 24) & 0xFF;
+		return (rgba >> 24) & 0xFF;
 	}
 
 	/**
-	 * @return the green value of the color
+	 * @return the green channel of the color
 	 */
 	public int getGreen() {
-		return (rgb >> 16) & 0xFF;
+		return (rgba >> 16) & 0xFF;
 	}
 
 	/**
-	 * @return the blue value of the color
+	 * @return the blue channel of the color
 	 */
 	public int getBlue() {
-		return (rgb >> 8) & 0xFF;
+		return (rgba >> 8) & 0xFF;
+	}
+
+	@Override
+	public Integer getAlpha() {
+		return rgba & 0xFF;
+	}
+
+	@Override
+	public int getRGBAlpha() {
+		return getAlpha();
 	}
 
 	/**
-	 * @return the alpha value of the color
+	 * @param red is the red channel in the color.
 	 */
-	public int getAlpha() {
-		return rgb & 0xFF;
-	}
-
-	/**
-	 * @param red is the red value in the color.
-	 * @return itself
-	 */
-	public RGBColor setRed(int red) {
+	public void setRed(int red) {
 		red = Math.max(Math.min(red, 255), 0);
-		rgb = (rgb & 0x00FFFFFF) | (red << 24);
-		return this;
+		rgba = (rgba & 0x00FFFFFF) | (red << 24);
 	}
 
 	/**
-	 * @param green is the green value in the color.
-	 * @return itself
+	 * @param green is the green channel in the color.
 	 */
-	public RGBColor setGreen(int green) {
+	public void setGreen(int green) {
 		green = Math.max(Math.min(green, 255), 0);
-		rgb = (rgb & 0xFF00FFFF) | (green << 16);
-		return this;
+		rgba = (rgba & 0xFF00FFFF) | (green << 16);
 	}
 
 	/**
-	 * @param blue is the blue value in the color.
-	 * @return itself
+	 * @param blue is the blue channel in the color.
 	 */
-	public RGBColor setBlue(int blue) {
+	public void setBlue(int blue) {
 		blue = Math.max(Math.min(blue, 255), 0);
-		rgb = (rgb & 0xFFFF00FF) | (blue << 8);
-		return this;
+		rgba = (rgba & 0xFFFF00FF) | (blue << 8);
 	}
 
-	/**
-	 * @param alpha is the alpha value in the color.
-	 * @return itself
-	 */
-	public RGBColor setAlpha(int alpha) {
+	@Override
+	public void setRGBAlpha(int alpha) {
+		setAlpha(alpha);
+	}
+
+	@Override
+	public void setAlpha(Integer alpha) {
 		alpha = Math.max(Math.min(alpha, 255), 0);
-		rgb = (rgb & 0xFFFFFF00) | (alpha);
-		return this;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getRGB() {
-		return rgb;
+		rgba = (rgba & 0xFFFFFF00) | (alpha);
 	}
 
 	@Override
@@ -154,6 +132,6 @@ public class RGBColor implements Color<RGBColor> {
 		return "RGB(R:%d,G:%d,B:%d%s)".formatted(getRed(),
 													getGreen(),
 													getBlue(),
-													getAlpha() == 255 ? "" : ",A:%d".formatted(getAlpha()));
+													generateAlphaString());
 	}
 }

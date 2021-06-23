@@ -1,36 +1,9 @@
 package de.quantumrange.colorUtil;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.regex.Pattern;
+import de.quantumrange.colorUtil.impl.HSLColor;
+import de.quantumrange.colorUtil.impl.RGBColor;
 
 public interface Color<T> {
-
-	/**
-	 * It parse HEX Colors into RGBColors.
-	 *
-	 * @param str is the Color in Text form. Example: #00FF2F, ...
-	 * @return itself
-	 */
-	T parse(String str);
-
-	/**
-	 * Tests if the text can be parsed.
-	 *
-	 * @param str is the Color in Text form. Example #00FF2F, ...
-	 * @return is the text parsable.
-	 */
-	default boolean canParse(String str) {
-		return pattern().matcher(str).find();
-	}
-
-	/**
-	 * A getter for the Pattern.
-	 *
-	 * @see Pattern
-	 * @return the pattern for this Color.
-	 */
-	Pattern pattern();
 
 	/**
 	 * Converts the Color to the Java standard {@link java.awt.Color} implementation.
@@ -62,5 +35,29 @@ public interface Color<T> {
 	 * @return itself
 	 */
 	T fromBytes(byte[] bytes);
+
+	/**
+	 * Calculate the Hex code für the color.
+	 *
+	 * @return the Color as Hex
+	 */
+	default String toHex() {
+		RGBColor c = new RGBColor(this);
+
+//		return "#%2s%2s%2s%s"
+//				.formatted(
+//						Integer.toString(c.getRed(), 16),
+//						Integer.toString(c.getGreen(), 16),
+//						Integer.toString(c.getBlue(), 16),
+//						c.generateHexAlphaString()
+//				);
+		return "#%02x%02x%02x%s"
+				.formatted(
+						c.getRed(),
+						c.getGreen(),
+						c.getBlue(),
+						c.generateHexAlphaString()
+				);
+	}
 
 }
