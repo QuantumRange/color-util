@@ -12,7 +12,7 @@ public interface AlphaColor<T extends Number> {
 	/**
 	 * Set the alpha channel of this color.
 	 *
-	 * @alpha alpha channel value
+	 * @param alpha channel value
 	 */
 	void setAlpha(T alpha);
 
@@ -26,12 +26,12 @@ public interface AlphaColor<T extends Number> {
 	/**
 	 * Set the alpha channel of this color in RGB like type (between 0-255).
 	 *
-	 * @alpha alpha channel value  (between 0-255)
+	 * @param alpha alpha channel value  (between 0-255)
 	 */
 	void setRGBAlpha(int alpha);
 
 	/**
-	 * Generate String for toString() methods for <code>\u003CT implements Color\u003E</code>.
+	 * Generate String for toString() methods for the Color.
 	 *
 	 * @return nothing if alpha is 255 (max) and alpha value if is it not 255.
 	 */

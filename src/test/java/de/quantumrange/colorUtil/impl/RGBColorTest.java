@@ -10,16 +10,6 @@ class RGBColorTest {
 
 	@Test
 	void getRed() {
-//		RGBColor rgbColor = new RGBColor(255, 0, 124, 25);
-//		CMYKColor cmykColor = new CMYKColor(rgbColor);
-//		HSLColor hslColor = new HSLColor(cmykColor);
-//		RGBColor res = new RGBColor(hslColor);
-//
-//		System.out.println("rgbColor = " + rgbColor);
-//		System.out.println("cmykColor = " + cmykColor);
-//		System.out.println("hslColor = " + hslColor);
-//		System.out.println("res = " + res);
-
 		assertEquals(132, new RGBColor(132, 50, 0, 72).getRed());
 	}
 
